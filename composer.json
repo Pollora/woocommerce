@@ -1,0 +1,24 @@
+{
+    "name": "pollen/woocommerce",
+    "description": "Use WooCommerce with Pollen",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Olivier Gorzalka",
+            "email": "olivier@amphibee.fr",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Pollen\\WooCommerce\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pollen\\WooCommerce\\Providers\\WooCommerceProvider"
+            ]
+        }
+    }
+}
