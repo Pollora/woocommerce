@@ -1,24 +1,90 @@
 {
-    "name": "pollen/woocommerce",
-    "description": "Use WooCommerce with Pollen",
-    "license": "GPL-2.0-or-later",
+    "name": "pollora/woocommerce",
+    "description": "WooCommerce for Pollora: its Blade templates, its template resolution, the Coming Soon page, its route conditions and its WordPress events as Laravel events.",
+    "type": "library",
+    "keywords": [
+        "blade",
+        "pollora",
+        "woocommerce",
+        "wordpress"
+    ],
+    "homepage": "https://pollora.dev",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Olivier Gorzalka",
-            "email": "olivier@amphibee.fr",
-            "role": "Developer"
+            "name": "Amphibee",
+            "email": "contact@amphibee.fr"
         }
     ],
+    "support": {
+        "issues": "https://github.com/Pollora/woocommerce/issues",
+        "source": "https://github.com/Pollora/woocommerce"
+    },
+    "require": {
+        "illuminate/contracts": "^13.38",
+        "illuminate/support": "^13.38",
+        "php": "^8.3",
+        "pollora/framework": "^13.38",
+        "pollora/hook": "^2.0.1"
+    },
+    "require-dev": {
+        "antecedent/patchwork": "^2.2",
+        "brain/monkey": "^2.7",
+        "johnbillion/extended-cpts": "^5.0.3",
+        "laravel/pint": "^1.22.1",
+        "mockery/mockery": "^1.6.12",
+        "pestphp/pest": "^3.8.2",
+        "php-stubs/woocommerce-stubs": "^11.2",
+        "php-stubs/wordpress-stubs": "^7.1",
+        "phpstan/phpstan": "^2.1.16",
+        "pollora/harness": "^0.1.7",
+        "szepeviktor/phpstan-wordpress": "^2.0"
+    },
     "autoload": {
         "psr-4": {
-            "Pollen\\WooCommerce\\": "src/"
+            "Pollora\\WooCommerce\\": "src/"
+        },
+        "files": [
+            "src/Compatibility/register.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pollora\\WooCommerce\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Pollen\\WooCommerce\\Providers\\WooCommerceProvider"
+                "Pollora\\WooCommerce\\Infrastructure\\Providers\\WooCommerceServiceProvider"
             ]
         }
-    }
+    },
+    "scripts": {
+        "test": [
+            "@test:unit",
+            "@phpstan",
+            "@lint:check"
+        ],
+        "test:unit": "pest",
+        "test:coverage": "pest --coverage",
+        "phpstan": "phpstan analyse",
+        "phpstan:ci": "phpstan analyse --no-progress",
+        "lint": "pint",
+        "lint:check": "pint --test",
+        "qa": "@php vendor/bin/pollora-qa check",
+        "qa:fast": "@php vendor/bin/pollora-qa check --fast"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true,
+            "pollora/helper-overrider": true,
+            "wikimedia/composer-merge-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
