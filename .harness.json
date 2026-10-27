@@ -1,0 +1,8 @@
+{
+    "profile": "integration",
+    "mode": "enforce",
+    "ratchet": {
+        "phpstan_level": 5,
+        "phpstan_baseline": 0
+    }
+}

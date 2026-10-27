@@ -1,0 +1,16 @@
+includes:
+    - vendor/pollora/harness/presets/phpstan/base.neon
+parameters:
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+    scanFiles:
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    ignoreErrors:
+        -
+            # `makeLoader()` is a macro Pollora\View\ViewServiceProvider adds to Illuminate's View.
+            message: '#^Call to an undefined method Illuminate\\Contracts\\View\\View::makeLoader\(\)\.$#'
+            identifier: method.notFound
+            path: src/Infrastructure/Services/WooCommerce.php
+            count: 1
