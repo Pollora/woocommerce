@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-27
+
 ### Added
 
 - WooCommerce's integration with Pollora, as a package of its own: Blade template resolution, the Coming Soon page, and the WooCommerce events (`OrderStatusChanged`, `Attribute*`, `TaxRate*`, `SettingUpdated`). It was `Pollora\ThirdParty\WooCommerce` and `Pollora\Events\WordPress\Plugins\WooCommerce` in `pollora/framework`.
