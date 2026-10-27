@@ -16,7 +16,7 @@ WooCommerce for [Pollora](https://pollora.dev), the Laravel framework for WordPr
 composer require pollora/woocommerce
 ```
 
-Requires PHP 8.3+, [`pollora/framework`](https://github.com/Pollora/framework) 13.38+ and WooCommerce. The service provider is discovered by Laravel; nothing runs unless WooCommerce is active.
+Requires PHP 8.3+, [`pollora/framework`](https://github.com/Pollora/framework) 13.39+ and WooCommerce. The service provider is discovered by Laravel; nothing runs unless WooCommerce is active.
 
 ## Blade templates
 

@@ -24,7 +24,7 @@
         "illuminate/contracts": "^13.38",
         "illuminate/support": "^13.38",
         "php": "^8.3",
-        "pollora/framework": "^13.38",
+        "pollora/framework": "^13.39",
         "pollora/hook": "^2.0.1"
     },
     "require-dev": {
