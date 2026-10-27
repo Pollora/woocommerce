@@ -37,6 +37,39 @@ describe('RegisterWooCommerceHooksUseCase', function (): void {
         $this->useCase->execute();
     });
 
+    it('registers at once when plugins_loaded has already fired', function (): void {
+        if (! defined('WC_ABSPATH')) {
+            define('WC_ABSPATH', '/var/www/html/wp-content/plugins/woocommerce/');
+        }
+
+        do_action('plugins_loaded');
+
+        $this->action->shouldNotReceive('add')->with('plugins_loaded', Mockery::any());
+        $this->action->shouldReceive('add')->with('after_setup_theme', Mockery::any())->once();
+        $this->action->shouldReceive('add')->with('wp_loaded', Mockery::type('Closure'))->once();
+        $this->filter->shouldReceive('add')->times(7)->andReturn($this->hookReturn);
+        $this->integration->shouldReceive('loadThemeTemplateHooks')->once();
+
+        $this->useCase->execute();
+    });
+
+    it('adds theme support at once when after_setup_theme has already fired', function (): void {
+        if (! defined('WC_ABSPATH')) {
+            define('WC_ABSPATH', '/var/www/html/wp-content/plugins/woocommerce/');
+        }
+
+        do_action('plugins_loaded');
+        do_action('after_setup_theme');
+
+        $this->action->shouldNotReceive('add')->with('after_setup_theme', Mockery::any());
+        $this->action->shouldReceive('add')->with('wp_loaded', Mockery::type('Closure'))->once();
+        $this->filter->shouldReceive('add')->times(7)->andReturn($this->hookReturn);
+        $this->integration->shouldReceive('loadThemeTemplateHooks')->once();
+        $this->integration->shouldReceive('addThemeSupport')->once();
+
+        $this->useCase->execute();
+    });
+
     it('registers template filters when WC_ABSPATH is defined', function (): void {
         if (! defined('WC_ABSPATH')) {
             define('WC_ABSPATH', '/var/www/html/wp-content/plugins/woocommerce/');

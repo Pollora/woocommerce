@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\WooCommerce\Application\UseCases;
 
+use Closure;
 use Pollora\Hook\Domain\Contract\Action;
 use Pollora\Hook\Domain\Contract\Filter;
 use Pollora\WooCommerce\Domain\Contracts\ComingSoonHandlerInterface;
@@ -40,13 +41,30 @@ class RegisterWooCommerceHooksUseCase
      */
     private function registerPluginsLoadedAction(): void
     {
-        $this->action->add('plugins_loaded', function (): void {
+        $this->whenHookFires('plugins_loaded', function (): void {
             if (defined('WC_ABSPATH')) {
                 $this->registerTemplateFilters();
                 $this->registerComingSoonFilter();
                 $this->registerSetupActions();
             }
         });
+    }
+
+    /**
+     * Run a callback when a one-shot WordPress action fires, or now if it already has.
+     *
+     * The framework loads WordPress while it boots, and a package's service provider boots
+     * after that: by then `plugins_loaded` is behind us, and a callback added to it would never run.
+     */
+    private function whenHookFires(string $hook, Closure $callback): void
+    {
+        if (function_exists('did_action') && \did_action($hook) > 0) {
+            $callback();
+
+            return;
+        }
+
+        $this->action->add($hook, $callback);
     }
 
     /**
@@ -105,7 +123,7 @@ class RegisterWooCommerceHooksUseCase
     private function registerComingSoonFilter(): void
     {
         // Remove WC's handler on wp_loaded (after WC has registered its hooks)
-        $this->action->add('wp_loaded', function (): void {
+        $this->whenHookFires('wp_loaded', function (): void {
             ComingSoonHandler::removeWooCommerceHandler();
         });
 
@@ -127,13 +145,6 @@ class RegisterWooCommerceHooksUseCase
         $this->woocommerceIntegration->loadThemeTemplateHooks();
 
         // Add theme support
-        if (function_exists('doing_action') && doing_action('after_setup_theme')) {
-            $this->woocommerceIntegration->addThemeSupport();
-        } else {
-            $this->action->add(
-                'after_setup_theme',
-                $this->woocommerceIntegration->addThemeSupport(...)
-            );
-        }
+        $this->whenHookFires('after_setup_theme', $this->woocommerceIntegration->addThemeSupport(...));
     }
 }
