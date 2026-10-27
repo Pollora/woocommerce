@@ -37,7 +37,7 @@
         "php-stubs/woocommerce-stubs": "^11.2",
         "php-stubs/wordpress-stubs": "^7.1",
         "phpstan/phpstan": "^2.1.16",
-        "pollora/harness": "^0.1.7",
+        "pollora/harness": "^0.1.9",
         "szepeviktor/phpstan-wordpress": "^2.0"
     },
     "autoload": {
