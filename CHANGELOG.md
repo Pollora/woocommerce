@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- WooCommerce's private link grants access to the pages the Coming Soon handler hides (shop, product, cart, checkout, account). The handler read a `woocommerce_share_key` cookie, the name of the option holding the key; it now reads the `woo-share` query parameter and cookie as WooCommerce does, and sets the cookie when the key comes from the link, since WooCommerce's own handler, which set it, is removed. ([#7](https://github.com/Pollora/woocommerce/issues/7))
+- The Coming Soon handler honours the `woocommerce_coming_soon_exclude` filter, as WooCommerce's handler does.
+
 ## [0.1.0] - 2026-10-27
 
 ### Added
