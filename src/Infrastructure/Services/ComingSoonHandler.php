@@ -31,6 +31,16 @@ class ComingSoonHandler implements ComingSoonHandlerInterface
      */
     private const string STORE_ONLY_VIEW_NAME = 'woocommerce.coming-soon-store-only';
 
+    /**
+     * Query parameter and cookie WooCommerce's private link carries the share key in.
+     */
+    private const string SHARE_KEY_NAME = 'woo-share';
+
+    /**
+     * How long the share key cookie lasts: 90 days, as WooCommerce sets it.
+     */
+    private const int SHARE_KEY_COOKIE_LIFETIME = 90 * 24 * 60 * 60;
+
     public function __construct(
         private readonly ViewFactory $viewFactory
     ) {}
@@ -72,6 +82,11 @@ class ComingSoonHandler implements ComingSoonHandlerInterface
             return false;
         }
 
+        // Requests a plugin excludes from Coming Soon mode, as WooCommerce allows
+        if (apply_filters('woocommerce_coming_soon_exclude', false)) {
+            return false;
+        }
+
         // Check private link / share key access
         if ($this->hasValidShareKeyAccess()) {
             return false;
@@ -101,13 +116,35 @@ class ComingSoonHandler implements ComingSoonHandlerInterface
             return false;
         }
 
-        $shareKey = get_option('woocommerce_share_key', '');
+        $shareKey = (string) get_option('woocommerce_share_key', '');
         if ($shareKey === '' || $shareKey === '0') {
             return false;
         }
 
-        // Check cookie set by WooCommerce's share link feature
-        return isset($_COOKIE['woocommerce_share_key']) && $_COOKIE['woocommerce_share_key'] === $shareKey;
+        // The private link carries the key as a query parameter: remember it, as
+        // WooCommerce does, so the visitor keeps access on the next pages
+        if (($_GET[self::SHARE_KEY_NAME] ?? null) === $shareKey) {
+            $this->rememberShareKey($shareKey);
+
+            return true;
+        }
+
+        return ($_COOKIE[self::SHARE_KEY_NAME] ?? null) === $shareKey;
+    }
+
+    /**
+     * Persist the share key in the cookie WooCommerce reads it back from.
+     */
+    private function rememberShareKey(string $shareKey): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+
+        setcookie(self::SHARE_KEY_NAME, $shareKey, [
+            'expires' => time() + self::SHARE_KEY_COOKIE_LIFETIME,
+            'path' => '/',
+        ]);
     }
 
     /**
