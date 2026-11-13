@@ -6,6 +6,8 @@ use Brain\Monkey;
 
 require_once __DIR__.'/Stubs/TestContainer.php';
 require_once __DIR__.'/Stubs/WP_Screen.php';
+require_once __DIR__.'/Stubs/WC_Order.php';
+require_once __DIR__.'/Stubs/ComingSoonRequestHandler.php';
 
 /*
 |--------------------------------------------------------------------------
