@@ -47,4 +47,34 @@ describe('LegacyClassAliases', function (): void {
             'Pollora\\ThirdParty\\WooCommerce\\' => 'Pollora\\WooCommerce\\',
         ]);
     });
+
+    test('registers its autoloader once, however many times it is asked', function (): void {
+        $registered = new ReflectionProperty(LegacyClassAliases::class, 'registered');
+        $before = spl_autoload_functions();
+        $wasRegistered = $registered->getValue();
+        $registered->setValue(null, false);
+
+        try {
+            LegacyClassAliases::register();
+            LegacyClassAliases::register();
+            $added = array_values(array_filter(
+                spl_autoload_functions(),
+                fn (mixed $loader): bool => ! in_array($loader, $before, true)
+            ));
+
+            expect($added)->toHaveCount(1)
+                ->and($registered->getValue())->toBeTrue();
+        } finally {
+            foreach ($added ?? [] as $loader) {
+                spl_autoload_unregister($loader);
+            }
+            $registered->setValue(null, $wasRegistered);
+        }
+    });
+
+    test('has an autoloader registered when the package is loaded', function (): void {
+        // vendor/autoload.php ran src/Compatibility/register.php
+        expect(class_exists('Pollora\\ThirdParty\\WooCommerce\\Domain\\Models\\Template'))->toBeTrue()
+            ->and((new ReflectionClass('Pollora\\ThirdParty\\WooCommerce\\Domain\\Models\\Template'))->getName())->toBe(Template::class);
+    });
 });

@@ -151,6 +151,25 @@ describe('WordPressWooCommerceAdapter', function (): void {
         expect($result)->toBe('woocommerce/');
     });
 
+    test('asks the WC() instance for its template path when it has one', function (): void {
+        $woocommerce = new class
+        {
+            public function template_path(): string
+            {
+                return 'shop-templates/';
+            }
+        };
+        Brain\Monkey\Functions\when('WC')->justReturn($woocommerce);
+
+        expect($this->adapter->getWooCommerceTemplatePath())->toBe('shop-templates/');
+    });
+
+    test('returns default template path when WC has no template_path method', function (): void {
+        Brain\Monkey\Functions\when('WC')->justReturn(new stdClass);
+
+        expect($this->adapter->getWooCommerceTemplatePath())->toBe('woocommerce/');
+    });
+
     test('returns default template path when WC not available', function (): void {
         Brain\Monkey\Functions\when('WC')->justReturn();
 
