@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-16
+
 ### Fixed
 
 - The theme's Blade templates and the WooCommerce events also apply to the requests WordPress answers on its own: REST, Store API checkout, `?wc-api=` callbacks such as a payment webhook. The framework runs `wp()` from its own boot and these requests end there, before this provider booted and hooked in: an email sent while handling one used WooCommerce's own header and footer. The hooks are now registered while the application is booting, before any provider boots.
