@@ -110,17 +110,19 @@ describe('WooCommerceServiceProvider', function (): void {
         expect($useCase)->toBeInstanceOf(RegisterWooCommerceHooksUseCase::class);
     });
 
-    test('executes the use case and registers the WooCommerce events on boot', function (): void {
+    test('registers the WordPress hooks before any service provider boots', function (): void {
+        $this->provider->register();
+
         $useCase = Mockery::mock(RegisterWooCommerceHooksUseCase::class);
         $useCase->shouldReceive('execute')->once();
 
         $dispatcher = Mockery::mock(WooCommerceEventDispatcher::class);
         $dispatcher->shouldReceive('registerEvents')->once();
 
-        $this->container->instance(RegisterWooCommerceHooksUseCase::class, $useCase);
-        $this->container->instance(WooCommerceEventDispatcher::class, $dispatcher);
+        $this->container->singleton(RegisterWooCommerceHooksUseCase::class, fn (): RegisterWooCommerceHooksUseCase => $useCase);
+        $this->container->singleton(WooCommerceEventDispatcher::class, fn (): WooCommerceEventDispatcher => $dispatcher);
 
-        $this->provider->boot();
+        $this->container->fireBootingCallbacks();
     });
 
     test('registers the dispatcher of the WooCommerce events', function (): void {
@@ -164,6 +166,21 @@ class WooCommerceTestContainer extends TestContainer implements Container
     private array $singletons = [];
 
     private array $services = [];
+
+    /** @var list<callable> */
+    private array $bootingCallbacks = [];
+
+    public function booting(callable $callback): void
+    {
+        $this->bootingCallbacks[] = $callback;
+    }
+
+    public function fireBootingCallbacks(): void
+    {
+        foreach ($this->bootingCallbacks as $callback) {
+            $callback($this);
+        }
+    }
 
     public function singleton($abstract, $concrete = null): void
     {

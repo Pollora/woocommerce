@@ -40,12 +40,20 @@ class WooCommerceServiceProvider extends ServiceProvider
         $this->registerDomainServices();
         $this->registerInfrastructureServices();
         $this->registerApplicationServices();
+
+        $this->app->booting($this->registerWordPressHooks(...));
     }
 
     /**
-     * Bootstrap any application services.
+     * Hook into WordPress before any service provider boots.
+     *
+     * The framework runs WordPress from its own boot, `wp()` included: a REST
+     * request, or a `?wc-api=` callback such as a payment webhook, is answered
+     * and ends there. Hooks added from this provider's boot would come too late
+     * for it, and an email sent while handling it would fall back to
+     * WooCommerce's own templates.
      */
-    public function boot(): void
+    private function registerWordPressHooks(): void
     {
         $this->executeWooCommerceHooksRegistration();
         $this->app->make(WooCommerceEventDispatcher::class)->registerEvents();
