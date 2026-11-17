@@ -144,6 +144,31 @@ describe('WooCommerceServiceProvider', function (): void {
         ]);
     });
 
+    test('gives Route::wp every default WooCommerce condition and no other', function (): void {
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('wordpress.plugin_conditions.woocommerce'))->toBe([
+            'is_shop' => 'shop',
+            'is_product' => 'product',
+            'is_cart' => 'cart',
+            'is_checkout' => 'checkout',
+            'is_account_page' => 'account',
+            'is_product_category' => 'product_category',
+            'is_product_tag' => 'product_tag',
+            'is_wc_endpoint_url' => 'wc_endpoint',
+        ]);
+    });
+
+    test('keeps the defaults when the project\'s own conditions are set to null', function (): void {
+        $this->container->get('config')->set('wordpress.plugin_conditions.woocommerce', null);
+
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('wordpress.plugin_conditions.woocommerce'))
+            ->toHaveKey('is_shop', 'shop')
+            ->toHaveCount(8);
+    });
+
     test('lets a project\'s own WooCommerce conditions win', function (): void {
         $this->container->get('config')->set('wordpress.plugin_conditions.woocommerce', [
             'is_shop' => 'boutique',

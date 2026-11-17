@@ -183,3 +183,52 @@ describe('ComingSoonHandler::removeWooCommerceHandler()', function (): void {
         ComingSoonHandler::removeWooCommerceHandler();
     });
 });
+
+describe('ComingSoonHandler share key and terms page edge cases', function (): void {
+    it('compares the share key as text, whatever type the option comes in', function (): void {
+        $handler = ($this->makeHandler)(['woocommerce_coming_soon' => 'yes', 'woocommerce_private_link' => 'yes', 'woocommerce_share_key' => 123]);
+        $_GET['woo-share'] = '123';
+
+        expect($handler->handleTemplateInclude($this->template))->toBe($this->template);
+    });
+
+    it('lets a visitor in through the share key cookie', function (): void {
+        $handler = ($this->makeHandler)(['woocommerce_coming_soon' => 'yes', 'woocommerce_private_link' => 'yes', 'woocommerce_share_key' => 'abc']);
+        $_COOKIE['woo-share'] = 'abc';
+
+        expect($handler->handleTemplateInclude($this->template))->toBe($this->template);
+    });
+
+    it('does not take a terms page id that is not positive for a page', function (int $pageId, bool $shown): void {
+        ($this->storeConditionals)(['wc_terms_and_conditions_page_id' => $pageId]);
+        Functions\when('is_page')->justReturn(true);
+        $handler = ($this->makeHandler)($this->storeOnly);
+
+        expect($handler->handleTemplateInclude($this->template))->toBe($shown ? $this->comingSoon : $this->template);
+    })->with([
+        'minus one' => [-1, false],
+        'zero' => [0, false],
+        'one' => [1, true],
+        'many' => [77, true],
+    ]);
+});
+
+describe('ComingSoonHandler::removeWooCommerceHandler() without a template_include hook', function (): void {
+    it('returns before reading the hook, so nothing is raised', function (): void {
+        $GLOBALS['wp_filter'] = [];
+        $raised = [];
+        set_error_handler(function (int $level, string $message) use (&$raised): bool {
+            $raised[] = $message;
+
+            return true;
+        });
+
+        try {
+            ComingSoonHandler::removeWooCommerceHandler();
+        } finally {
+            restore_error_handler();
+        }
+
+        expect($raised)->toBe([]);
+    });
+});
