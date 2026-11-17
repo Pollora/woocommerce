@@ -139,4 +139,26 @@ describe('RegisterWooCommerceHooksUseCase', function (): void {
         expect($registeredFilters)->toContain('comments_template');
         expect($registeredFilters)->toContain('template_include');
     });
+
+    it('registers each filter with its priority and its number of accepted arguments', function (): void {
+        if (! defined('WC_ABSPATH')) {
+            define('WC_ABSPATH', '/var/www/html/wp-content/plugins/woocommerce/');
+        }
+
+        do_action('plugins_loaded');
+
+        $this->action->shouldReceive('add')->with('after_setup_theme', Mockery::type('Closure'))->once();
+        $this->action->shouldReceive('add')->with('wp_loaded', Mockery::type('Closure'))->once();
+        $this->integration->shouldReceive('loadThemeTemplateHooks')->once();
+
+        $this->filter->shouldReceive('add')->once()->with('woocommerce_template_loader_files', Mockery::type('Closure'), 10, 2)->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('woocommerce_locate_template', Mockery::type('Closure'), 10, 2)->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('woocommerce_locate_core_template', Mockery::type('Closure'), 10, 2)->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('wc_get_template_part', Mockery::type('Closure'))->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('wc_get_template', Mockery::type('Closure'), 1000)->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('comments_template', Mockery::type('Closure'), 11)->andReturn($this->hookReturn);
+        $this->filter->shouldReceive('add')->once()->with('template_include', Mockery::type('Closure'), 20)->andReturn($this->hookReturn);
+
+        $this->useCase->execute();
+    });
 });
