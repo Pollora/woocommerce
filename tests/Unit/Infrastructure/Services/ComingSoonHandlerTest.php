@@ -65,6 +65,29 @@ describe('ComingSoonHandler::handleTemplateInclude()', function (): void {
         expect($this->handler->handleTemplateInclude($this->productTemplate))->toBe($this->comingSoonTemplate);
     });
 
+    it('shows the coming soon page for a submitted share key that is not the stored one', function (string $source, mixed $submitted): void {
+        $GLOBALS[$source]['woo-share'] = $submitted;
+
+        expect($this->handler->handleTemplateInclude($this->productTemplate))->toBe($this->comingSoonTemplate);
+    })->with([
+        'query, empty' => ['_GET', ''],
+        'query, shorter' => ['_GET', 'test'],
+        'query, longer' => ['_GET', 'test-share-key-and-more'],
+        'query, same length' => ['_GET', 'test-share-kez'],
+        'query, array' => ['_GET', ['test-share-key']],
+        'cookie, empty' => ['_COOKIE', ''],
+        'cookie, shorter' => ['_COOKIE', 'test'],
+        'cookie, longer' => ['_COOKIE', 'test-share-key-and-more'],
+        'cookie, same length' => ['_COOKIE', 'test-share-kez'],
+        'cookie, array' => ['_COOKIE', ['test-share-key']],
+        'query, integer' => ['_GET', 0],
+        'query, null' => ['_GET', null],
+    ]);
+
+    it('shows the coming soon page when neither the query nor the cookie carries a share key', function (): void {
+        expect($this->handler->handleTemplateInclude($this->productTemplate))->toBe($this->comingSoonTemplate);
+    });
+
     it('shows the coming soon page when the private link is disabled', function (): void {
         $this->wooCommerceOptions['woocommerce_private_link'] = 'no';
         $_GET['woo-share'] = $this->shareKey;
