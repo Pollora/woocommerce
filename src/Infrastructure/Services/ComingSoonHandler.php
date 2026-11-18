@@ -123,13 +123,28 @@ class ComingSoonHandler implements ComingSoonHandlerInterface
 
         // The private link carries the key as a query parameter: remember it, as
         // WooCommerce does, so the visitor keeps access on the next pages
-        if (($_GET[self::SHARE_KEY_NAME] ?? null) === $shareKey) {
+        if ($this->matchesShareKey($_GET[self::SHARE_KEY_NAME] ?? null, $shareKey)) {
             $this->rememberShareKey($shareKey);
 
             return true;
         }
 
-        return ($_COOKIE[self::SHARE_KEY_NAME] ?? null) === $shareKey;
+        return $this->matchesShareKey($_COOKIE[self::SHARE_KEY_NAME] ?? null, $shareKey);
+    }
+
+    /**
+     * Compare a submitted share key with the stored one in constant time.
+     *
+     * A plain `===` stops at the first differing character, which lets an attacker
+     * recover the key byte by byte from response timings. A value that is not a
+     * string (absent, or an array such as `?woo-share[]=x`) never matches.
+     *
+     * @param  mixed  $submitted  Raw value read from the query string or the cookie
+     * @param  string  $shareKey  The non-empty key stored by WooCommerce
+     */
+    private function matchesShareKey(mixed $submitted, string $shareKey): bool
+    {
+        return is_string($submitted) && hash_equals($shareKey, $submitted);
     }
 
     /**
