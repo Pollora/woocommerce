@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-19
+
 ### Security
 
 - The share key of the private coming soon link is compared in constant time (`hash_equals()`), so response timings cannot be used to recover it. A value that is not a string (such as `?woo-share[]=x`) never grants access.
