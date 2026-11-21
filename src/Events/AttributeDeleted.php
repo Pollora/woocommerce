@@ -11,7 +11,7 @@ namespace Pollora\WooCommerce\Events;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class AttributeDeleted extends WooCommerceEvent
+final class AttributeDeleted extends WooCommerceEvent
 {
     /**
      * Constructor.

@@ -17,7 +17,7 @@ use Pollora\WooCommerce\Infrastructure\Adapters\WordPressWooCommerceAdapter;
  * This class provides the concrete implementation of WooCommerce integration
  * using Laravel's service container and WordPress/WooCommerce functions.
  */
-class WooCommerce implements WooCommerceIntegrationInterface
+final class WooCommerce implements WooCommerceIntegrationInterface
 {
     /**
      * Request-level cache for template resolution results.
@@ -143,7 +143,7 @@ class WooCommerce implements WooCommerceIntegrationInterface
      * @param  string  $templatePath  The template file path
      * @return string|null The view name or null if it cannot be determined
      */
-    protected function getViewNameFromTemplate(string $templatePath): ?string
+    private function getViewNameFromTemplate(string $templatePath): ?string
     {
         $realPath = realpath($templatePath);
         if (in_array($realPath, ['', '0', false], true)) {
@@ -159,7 +159,7 @@ class WooCommerce implements WooCommerceIntegrationInterface
      * @param  string  $template  The template name to locate
      * @return string The absolute path to the template, or empty string if not found
      */
-    protected function locateThemeTemplate(string $template): string
+    private function locateThemeTemplate(string $template): string
     {
         // Build the theme template path: woocommerce/single-product.php
         $wcTemplatePath = $this->domainService->getWooCommerceTemplatePath();

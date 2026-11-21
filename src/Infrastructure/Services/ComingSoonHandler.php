@@ -19,7 +19,7 @@ use Pollora\WooCommerce\Domain\Contracts\ComingSoonHandlerInterface;
  * themes. This handler intercepts that behavior by removing WC's hook
  * and providing a Blade-compatible alternative.
  */
-class ComingSoonHandler implements ComingSoonHandlerInterface
+final class ComingSoonHandler implements ComingSoonHandlerInterface
 {
     /**
      * Blade view name for the coming soon page.

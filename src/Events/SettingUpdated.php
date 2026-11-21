@@ -11,7 +11,7 @@ namespace Pollora\WooCommerce\Events;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class SettingUpdated extends WooCommerceEvent
+final class SettingUpdated extends WooCommerceEvent
 {
     /**
      * Constructor.
