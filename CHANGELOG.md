@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The event classes (`AttributeCreated`, `AttributeDeleted`, `AttributeUpdated`, `OrderStatusChanged`, `SettingUpdated`, `TaxRateCreated`, `TaxRateDeleted`, `TaxRateUpdated`), `ComingSoonHandler`, `WooCommerce`, `WooCommerceTemplateResolver` and `WooCommerceServiceProvider` are now `final` (CONV-08). This is a restriction of the API for anyone who extended them: a class that is not an extension point can no longer be subclassed; compose them instead
+
 ## [0.1.3] - 2026-11-19
 
 ### Security

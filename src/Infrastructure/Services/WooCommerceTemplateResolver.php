@@ -13,7 +13,7 @@ use Pollora\WooCommerce\Domain\Services\WooCommerceService;
  * This class provides the concrete implementation of template resolution
  * for WooCommerce using Laravel's view system and domain services.
  */
-class WooCommerceTemplateResolver implements TemplateResolverInterface
+final class WooCommerceTemplateResolver implements TemplateResolverInterface
 {
     public function __construct(
         private readonly WooCommerceService $domainService

@@ -11,7 +11,7 @@ namespace Pollora\WooCommerce\Events;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class TaxRateDeleted extends WooCommerceEvent
+final class TaxRateDeleted extends WooCommerceEvent
 {
     /**
      * Constructor.

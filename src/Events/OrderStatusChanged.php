@@ -14,7 +14,7 @@ use WC_Order;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class OrderStatusChanged extends WooCommerceEvent
+final class OrderStatusChanged extends WooCommerceEvent
 {
     /**
      * Constructor.

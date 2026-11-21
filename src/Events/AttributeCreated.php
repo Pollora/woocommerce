@@ -11,4 +11,4 @@ namespace Pollora\WooCommerce\Events;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class AttributeCreated extends AttributeEvent {}
+final class AttributeCreated extends AttributeEvent {}

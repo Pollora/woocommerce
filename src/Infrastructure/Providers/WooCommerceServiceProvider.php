@@ -29,7 +29,7 @@ use Pollora\WooCommerce\Infrastructure\Services\WooCommerceTemplateResolver;
  * and binds interfaces to their implementations according to the
  * hexagonal architecture pattern.
  */
-class WooCommerceServiceProvider extends ServiceProvider
+final class WooCommerceServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
