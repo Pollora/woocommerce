@@ -30,6 +30,32 @@ describe('WooCommerceServiceProvider', function (): void {
         $this->provider = new WooCommerceServiceProvider($this->container);
     });
 
+    test('keeps the shopper session groups out of the object cache prefetch', function (): void {
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('pollora.object-cache.prefetch.exclude_groups'))
+            ->toBe(['wc_session_id', 'wc_cache_*']);
+    });
+
+    test('adds to the groups the object cache already excludes, without repeating one', function (): void {
+        $this->container->get('config')->set('pollora.object-cache.prefetch.exclude_groups', ['userlogins', 'wc_session_id']);
+
+        $this->provider->register();
+        (new WooCommerceServiceProvider($this->container))->register();
+
+        expect($this->container->get('config')->get('pollora.object-cache.prefetch.exclude_groups'))
+            ->toBe(['userlogins', 'wc_session_id', 'wc_cache_*']);
+    });
+
+    test('replaces a setting that is not a list', function (): void {
+        $this->container->get('config')->set('pollora.object-cache.prefetch.exclude_groups', 'userlogins');
+
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('pollora.object-cache.prefetch.exclude_groups'))
+            ->toBe(['wc_session_id', 'wc_cache_*']);
+    });
+
     test('can register domain services', function (): void {
         $this->provider->register();
 
@@ -195,6 +221,18 @@ describe('WooCommerceServiceProvider', function (): void {
         expect($conditions['is_shop'])->toBe('boutique')
             ->and($conditions['is_subscription'])->toBe('subscription')
             ->and($conditions['is_cart'])->toBe('cart');
+    });
+
+    // Declared last: a constant stays defined for the rest of the process.
+    test('follows a session group the project renamed', function (): void {
+        if (! defined('WC_SESSION_CACHE_GROUP')) {
+            define('WC_SESSION_CACHE_GROUP', 'my_session_group');
+        }
+
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('pollora.object-cache.prefetch.exclude_groups'))
+            ->toContain('wc_session_id', 'wc_cache_*', constant('WC_SESSION_CACHE_GROUP'));
     });
 });
 

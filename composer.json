@@ -40,6 +40,9 @@
         "pollora/harness": "^0.1.35",
         "szepeviktor/phpstan-wordpress": "^2.0"
     },
+    "suggest": {
+        "pollora/object-cache": "A persistent Redis object cache; with its prefetch on, the shopper's session groups are kept out of it"
+    },
     "autoload": {
         "psr-4": {
             "Pollora\\WooCommerce\\": "src/"
