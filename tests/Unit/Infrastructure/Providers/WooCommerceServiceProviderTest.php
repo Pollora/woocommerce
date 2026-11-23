@@ -5,11 +5,14 @@ declare(strict_types=1);
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Container\ContextualBindingBuilder;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Pollora\Hook\Domain\Contract\Action;
 use Pollora\Hook\Domain\Contract\Filter;
+use Pollora\Hook\Domain\Contract\HookInterface;
 use Pollora\View\Domain\Contracts\TemplateFinderInterface;
 use Pollora\WooCommerce\Application\UseCases\RegisterWooCommerceHooksUseCase;
+use Pollora\WooCommerce\Domain\Contracts\ComingSoonHandlerInterface;
 use Pollora\WooCommerce\Domain\Contracts\TemplateResolverInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceIntegrationInterface;
@@ -113,16 +116,26 @@ describe('WooCommerceServiceProvider', function (): void {
     test('registers the WordPress hooks before any service provider boots', function (): void {
         $this->provider->register();
 
-        $useCase = Mockery::mock(RegisterWooCommerceHooksUseCase::class);
-        $useCase->shouldReceive('execute')->once();
+        $hooks = [];
+        $action = Mockery::mock(Action::class);
+        $action->shouldReceive('add')->andReturnUsing(function (string $hook) use (&$hooks): HookInterface {
+            $hooks[] = $hook;
 
-        $dispatcher = Mockery::mock(WooCommerceEventDispatcher::class);
-        $dispatcher->shouldReceive('registerEvents')->once();
+            return Mockery::mock(HookInterface::class);
+        });
 
-        $this->container->singleton(RegisterWooCommerceHooksUseCase::class, fn (): RegisterWooCommerceHooksUseCase => $useCase);
-        $this->container->singleton(WooCommerceEventDispatcher::class, fn (): WooCommerceEventDispatcher => $dispatcher);
+        $this->container->instance(Action::class, $action);
+        $this->container->instance(Filter::class, Mockery::mock(Filter::class));
+        $this->container->singleton(WooCommerceEventDispatcher::class, fn (): WooCommerceEventDispatcher => new WooCommerceEventDispatcher(Mockery::mock(EventDispatcher::class), $action));
+        $this->container->instance(TemplateFinderInterface::class, Mockery::mock(TemplateFinderInterface::class));
+        $this->container->instance(ViewFactory::class, Mockery::mock(ViewFactory::class));
+        $this->container->instance(WooCommerceIntegrationInterface::class, Mockery::mock(WooCommerceIntegrationInterface::class));
+        $this->container->instance(TemplateResolverInterface::class, Mockery::mock(TemplateResolverInterface::class));
+        $this->container->instance(ComingSoonHandlerInterface::class, Mockery::mock(ComingSoonHandlerInterface::class));
 
         $this->container->fireBootingCallbacks();
+
+        expect($hooks)->toContain('plugins_loaded', 'woocommerce_order_status_changed');
     });
 
     test('registers the dispatcher of the WooCommerce events', function (): void {
