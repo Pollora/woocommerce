@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-23
+
 ### Added
 
 - The service provider adds the shopper's session groups, `wc_session_id` (and the group `WC_SESSION_CACHE_GROUP` names, when the project renamed it) and `wc_cache_*`, to `pollora.object-cache.prefetch.exclude_groups`. With `pollora/object-cache` 0.2 and its prefetch on, a cart is then never loaded before the request asks for it. Nothing changes, and nothing is required, without that package. `pollora/object-cache` is listed in `suggest`.
