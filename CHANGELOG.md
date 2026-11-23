@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The event classes (`AttributeCreated`, `AttributeDeleted`, `AttributeUpdated`, `OrderStatusChanged`, `SettingUpdated`, `TaxRateCreated`, `TaxRateDeleted`, `TaxRateUpdated`), `ComingSoonHandler`, `WooCommerce`, `WooCommerceTemplateResolver` and `WooCommerceServiceProvider` are now `final` (CONV-08). This is a restriction of the API for anyone who extended them: a class that is not an extension point can no longer be subclassed; compose them instead
+- **BREAKING**: `RegisterWooCommerceHooksUseCase` and `WooCommerceEventDispatcher` are now `final` (CONV-08). Nothing in the ecosystem extends them; anyone who subclassed one must compose it instead (inject it, or listen to the same WordPress hooks). `WooCommerceService` and `WordPressWooCommerceAdapter` stay open for now: the unit tests mock them and no interface exists yet to mock instead
 
 ## [0.1.3] - 2026-11-19
 

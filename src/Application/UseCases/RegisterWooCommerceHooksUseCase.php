@@ -18,7 +18,7 @@ use Pollora\WooCommerce\Infrastructure\Services\ComingSoonHandler;
  * This class orchestrates the registration of all WooCommerce-related
  * WordPress hooks and filters through the application layer.
  */
-class RegisterWooCommerceHooksUseCase
+final class RegisterWooCommerceHooksUseCase
 {
     public function __construct(
         private readonly Action $action,

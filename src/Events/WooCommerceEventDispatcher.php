@@ -15,7 +15,7 @@ use WC_Order;
  *
  * @author Olivier Gorzalka <olivier@amphibee.fr>
  */
-class WooCommerceEventDispatcher extends AbstractEventDispatcher
+final class WooCommerceEventDispatcher extends AbstractEventDispatcher
 {
     /**
      * WordPress actions to listen to.
