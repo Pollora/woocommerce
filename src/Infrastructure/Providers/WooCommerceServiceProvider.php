@@ -37,6 +37,7 @@ final class WooCommerceServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerRouteConditions();
+        $this->excludeSessionsFromPrefetch();
         $this->registerDomainServices();
         $this->registerInfrastructureServices();
         $this->registerApplicationServices();
@@ -78,6 +79,33 @@ final class WooCommerceServiceProvider extends ServiceProvider
             'is_product_tag' => 'product_tag',
             'is_wc_endpoint_url' => 'wc_endpoint',
         ], (array) $config->get('wordpress.plugin_conditions.woocommerce', [])));
+    }
+
+    /**
+     * Keep the shopper's session out of the object cache prefetch.
+     *
+     * With `pollora/object-cache` and its prefetch on, a page loads the keys its kind of page read
+     * before, at the first read of the request. WooCommerce's session group (`wc_session_id`,
+     * `WC_SESSION_CACHE_GROUP`) and the cache prefixes it builds from group names (`wc_cache_*`)
+     * hold a visitor's cart: a value read too early could show a cart another request just changed.
+     * The groups are added to the package's `prefetch.exclude_groups` setting, which is only an
+     * array in the configuration, so nothing happens, and nothing is required, without the package.
+     */
+    private function excludeSessionsFromPrefetch(): void
+    {
+        $config = $this->app->make('config');
+        $groups = ['wc_session_id', 'wc_cache_*'];
+
+        if (defined('WC_SESSION_CACHE_GROUP') && is_string(constant('WC_SESSION_CACHE_GROUP'))) {
+            $groups[] = constant('WC_SESSION_CACHE_GROUP');
+        }
+
+        $current = $config->get('pollora.object-cache.prefetch.exclude_groups', []);
+
+        $config->set('pollora.object-cache.prefetch.exclude_groups', array_values(array_unique([
+            ...(is_array($current) ? $current : []),
+            ...$groups,
+        ])));
     }
 
     /**
