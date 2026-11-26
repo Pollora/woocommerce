@@ -56,6 +56,13 @@ describe('WooCommerceServiceProvider', function (): void {
             ->toBe(['wc_session_id', 'wc_cache_*']);
     });
 
+    test('reports a config binding that is not a repository', function (): void {
+        $this->container->instance('config', new stdClass);
+
+        expect(fn () => $this->provider->register())
+            ->toThrow(LogicException::class, 'The "config" binding of the application is not a configuration repository.');
+    });
+
     test('can register domain services', function (): void {
         $this->provider->register();
 
