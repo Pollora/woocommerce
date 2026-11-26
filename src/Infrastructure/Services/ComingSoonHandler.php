@@ -221,7 +221,9 @@ final class ComingSoonHandler implements ComingSoonHandlerInterface
     {
         try {
             /** @phpstan-ignore method.notFound */
-            return $this->viewFactory->make($viewName)->getPath();
+            $path = $this->viewFactory->make($viewName)->getPath();
+
+            return is_string($path) ? $path : null;
         } catch (\InvalidArgumentException) {
             return null;
         }
@@ -237,23 +239,23 @@ final class ComingSoonHandler implements ComingSoonHandlerInterface
     {
         global $wp_filter;
 
-        if (! isset($wp_filter['template_include'])) {
+        $hook = is_array($wp_filter) ? ($wp_filter['template_include'] ?? null) : null;
+
+        if (! is_object($hook) || ! isset($hook->callbacks) || ! is_array($hook->callbacks)) {
             return;
         }
 
-        foreach ($wp_filter['template_include']->callbacks as $priority => $callbacks) {
-            foreach ($callbacks as $callback) {
-                if (! is_array($callback['function'] ?? null)) {
-                    continue;
-                }
+        foreach ($hook->callbacks as $priority => $callbacks) {
+            foreach ((array) $callbacks as $callback) {
+                $fn = is_array($callback) ? ($callback['function'] ?? null) : null;
 
-                $fn = $callback['function'];
                 if (
-                    is_object($fn[0])
+                    is_array($fn)
+                    && is_object($fn[0] ?? null)
                     && str_ends_with($fn[0]::class, 'ComingSoonRequestHandler')
                     && ($fn[1] ?? '') === 'handle_template_include'
                 ) {
-                    remove_filter('template_include', $fn, $priority);
+                    remove_filter('template_include', $fn, (int) $priority);
 
                     return;
                 }

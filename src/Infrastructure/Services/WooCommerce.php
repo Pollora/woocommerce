@@ -105,8 +105,10 @@ final class WooCommerce implements WooCommerceIntegrationInterface
             return $this->templateCache[$cacheKey] = $themeTemplate;
         }
 
-        // Create and return the loader file path
-        return $this->templateCache[$cacheKey] = $this->viewFactory->make($viewName)->makeLoader();
+        // Create and return the loader file path; WooCommerce's template stays when there is none
+        $loader = $this->viewFactory->make($viewName)->makeLoader();
+
+        return $this->templateCache[$cacheKey] = is_string($loader) ? $loader : $template;
     }
 
     /**

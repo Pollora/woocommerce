@@ -31,7 +31,7 @@ class WooCommerceService
         $paths = [];
 
         // Add WooCommerce plugin templates path if defined
-        if (defined('WC_ABSPATH')) {
+        if (defined('WC_ABSPATH') && is_string(WC_ABSPATH)) {
             $paths[] = WC_ABSPATH.'templates/';
         }
 

@@ -98,14 +98,16 @@ final class WooCommerceServiceProvider extends ServiceProvider
         $config = $this->config();
         $groups = ['wc_session_id', 'wc_cache_*'];
 
-        if (defined('WC_SESSION_CACHE_GROUP') && is_string(constant('WC_SESSION_CACHE_GROUP'))) {
-            $groups[] = constant('WC_SESSION_CACHE_GROUP');
+        $sessionGroup = defined('WC_SESSION_CACHE_GROUP') ? constant('WC_SESSION_CACHE_GROUP') : null;
+
+        if (is_string($sessionGroup)) {
+            $groups[] = $sessionGroup;
         }
 
         $current = $config->get('pollora.object-cache.prefetch.exclude_groups', []);
 
         $config->set('pollora.object-cache.prefetch.exclude_groups', array_values(array_unique([
-            ...(is_array($current) ? $current : []),
+            ...(is_array($current) ? array_filter($current, is_string(...)) : []),
             ...$groups,
         ])));
     }
