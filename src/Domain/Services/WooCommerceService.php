@@ -24,7 +24,7 @@ class WooCommerceService
     /**
      * Get default WooCommerce template paths.
      *
-     * @return array List of default template paths
+     * @return array<string> List of default template paths
      */
     public function getDefaultTemplatePaths(): array
     {
@@ -41,7 +41,7 @@ class WooCommerceService
     /**
      * Get theme template paths for WooCommerce.
      *
-     * @return array List of theme template paths
+     * @return array<string> List of theme template paths
      */
     public function getThemeTemplatePaths(): array
     {
@@ -85,7 +85,7 @@ class WooCommerceService
     /**
      * Get all template paths (default + theme).
      *
-     * @return array Complete list of template paths
+     * @return array<string> Complete list of template paths
      */
     public function getAllTemplatePaths(): array
     {
@@ -109,8 +109,8 @@ class WooCommerceService
     /**
      * Convert PHP template names to Blade equivalents in a list.
      *
-     * @param  array  $templates  List of template names
-     * @return array List with Blade template variants added
+     * @param  array<string>  $templates  List of template names
+     * @return array<string> List with Blade template variants added
      */
     public function addBladeVariants(array $templates): array
     {

@@ -31,6 +31,8 @@ final readonly class Template
 
     /**
      * Get the relative template path for WooCommerce.
+     *
+     * @param  array<string>  $defaultPaths
      */
     public function getRelativePath(array $defaultPaths = []): string
     {
@@ -39,6 +41,8 @@ final readonly class Template
 
     /**
      * Check if this template is a WooCommerce template.
+     *
+     * @param  array<string>  $defaultPaths
      */
     public function isWooCommerceTemplate(array $defaultPaths = []): bool
     {
