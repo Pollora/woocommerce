@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Pollora\WooCommerce\Infrastructure\Providers;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\ServiceProvider;
+use LogicException;
 use Pollora\Hook\Domain\Contract\Action;
 use Pollora\Hook\Domain\Contract\Filter;
 use Pollora\View\Domain\Contracts\TemplateFinderInterface;
@@ -67,7 +69,7 @@ final class WooCommerceServiceProvider extends ServiceProvider
      */
     private function registerRouteConditions(): void
     {
-        $config = $this->app->make('config');
+        $config = $this->config();
 
         $config->set('wordpress.plugin_conditions.woocommerce', array_merge([
             'is_shop' => 'shop',
@@ -93,19 +95,33 @@ final class WooCommerceServiceProvider extends ServiceProvider
      */
     private function excludeSessionsFromPrefetch(): void
     {
-        $config = $this->app->make('config');
+        $config = $this->config();
         $groups = ['wc_session_id', 'wc_cache_*'];
 
-        if (defined('WC_SESSION_CACHE_GROUP') && is_string(constant('WC_SESSION_CACHE_GROUP'))) {
-            $groups[] = constant('WC_SESSION_CACHE_GROUP');
+        $sessionGroup = defined('WC_SESSION_CACHE_GROUP') ? constant('WC_SESSION_CACHE_GROUP') : null;
+
+        if (is_string($sessionGroup)) {
+            $groups[] = $sessionGroup;
         }
 
         $current = $config->get('pollora.object-cache.prefetch.exclude_groups', []);
 
         $config->set('pollora.object-cache.prefetch.exclude_groups', array_values(array_unique([
-            ...(is_array($current) ? $current : []),
+            ...(is_array($current) ? array_filter($current, is_string(...)) : []),
             ...$groups,
         ])));
+    }
+
+    /**
+     * The configuration repository of the application.
+     *
+     * @throws LogicException If 'config' is bound to something else.
+     */
+    private function config(): Repository
+    {
+        $config = $this->app->make('config');
+
+        return $config instanceof Repository ? $config : throw new LogicException('The "config" binding of the application is not a configuration repository.');
     }
 
     /**

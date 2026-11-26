@@ -200,6 +200,12 @@ describe('WordPressWooCommerceAdapter', function (): void {
         expect($result)->toBe('test_value');
     });
 
+    test('applies no filter for an empty hook name', function (): void {
+        Brain\Monkey\Functions\expect('apply_filters')->never();
+
+        expect($this->adapter->applyFilters('', 'test_value'))->toBe('test_value');
+    });
+
     test('can detect woocommerce availability', function (): void {
         if (! defined('WC_ABSPATH')) {
             define('WC_ABSPATH', '/plugin/woocommerce/');

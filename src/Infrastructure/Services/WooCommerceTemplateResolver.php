@@ -21,6 +21,9 @@ final class WooCommerceTemplateResolver implements TemplateResolverInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @param  array<string>  $templates
+     * @return array<string>
      */
     public function extendTemplateLoaderFiles(array $templates, string $defaultFile): array
     {

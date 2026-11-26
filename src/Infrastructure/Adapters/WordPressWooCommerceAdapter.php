@@ -17,7 +17,7 @@ class WordPressWooCommerceAdapter implements WooCommerceEnvironmentInterface
     /**
      * Locate a template using WordPress locate_template function.
      *
-     * @param  string|array  $templates  Template file(s) to search for
+     * @param  string|array<string>  $templates  Template file(s) to search for
      * @param  bool  $load  Whether to load the template if found
      * @param  bool  $requireOnce  Whether to require_once or require
      * @return string The located template path
@@ -150,7 +150,7 @@ class WordPressWooCommerceAdapter implements WooCommerceEnvironmentInterface
      */
     public function applyFilters(string $hook, mixed $value, mixed ...$args): mixed
     {
-        if (function_exists('apply_filters')) {
+        if ($hook !== '' && function_exists('apply_filters')) {
             return apply_filters($hook, $value, ...$args);
         }
 
