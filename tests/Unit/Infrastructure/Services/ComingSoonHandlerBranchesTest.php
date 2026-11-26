@@ -83,6 +83,13 @@ describe('ComingSoonHandler when the whole site is coming soon', function (): vo
         expect($handler->handleTemplateInclude($this->template))->toBe('/theme/woocommerce.coming-soon.blade.php');
     })->with(['empty' => [''], 'zero' => ['0']]);
 
+    it('opens no access through a share key option that is not text', function (): void {
+        $handler = ($this->makeHandler)(['woocommerce_coming_soon' => 'yes', 'woocommerce_private_link' => 'yes', 'woocommerce_share_key' => ['abc']]);
+        $_GET['woo-share'] = 'Array';
+
+        expect($handler->handleTemplateInclude($this->template))->toBe('/theme/woocommerce.coming-soon.blade.php');
+    });
+
     it('keeps the template when no Blade coming soon view exists', function (): void {
         $handler = ($this->makeHandler)(['woocommerce_coming_soon' => 'yes'], ['woocommerce.coming-soon' => false]);
 
