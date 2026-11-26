@@ -178,6 +178,23 @@ describe('ComingSoonHandler::removeWooCommerceHandler()', function (): void {
         ComingSoonHandler::removeWooCommerceHandler();
     });
 
+    it('reads a malformed template_include hook without a warning', function (mixed $hook): void {
+        $GLOBALS['wp_filter']['template_include'] = $hook;
+        Functions\expect('remove_filter')->never();
+        set_error_handler(static function (int $level, string $message): never {
+            throw new ErrorException($message, 0, $level);
+        });
+
+        try {
+            ComingSoonHandler::removeWooCommerceHandler();
+        } finally {
+            restore_error_handler();
+        }
+    })->with([
+        'no callbacks' => [new stdClass],
+        'a priority without callbacks' => [(object) ['callbacks' => [10 => null]]],
+    ]);
+
     it('leaves other callbacks of template_include in place', function (): void {
         $GLOBALS['wp_filter']['template_include'] = ($this->hookWith)([
             'static' => ['function' => [ComingSoonHandler::class, 'removeWooCommerceHandler']],

@@ -47,6 +47,15 @@ describe('WooCommerceServiceProvider', function (): void {
             ->toBe(['userlogins', 'wc_session_id', 'wc_cache_*']);
     });
 
+    test('drops what is not a group name from the setting', function (): void {
+        $this->container->get('config')->set('pollora.object-cache.prefetch.exclude_groups', [['nested'], 'userlogins']);
+
+        $this->provider->register();
+
+        expect($this->container->get('config')->get('pollora.object-cache.prefetch.exclude_groups'))
+            ->toBe(['userlogins', 'wc_session_id', 'wc_cache_*']);
+    });
+
     test('replaces a setting that is not a list', function (): void {
         $this->container->get('config')->set('pollora.object-cache.prefetch.exclude_groups', 'userlogins');
 
