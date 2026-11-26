@@ -150,7 +150,7 @@ class WordPressWooCommerceAdapter implements WooCommerceEnvironmentInterface
      */
     public function applyFilters(string $hook, mixed $value, mixed ...$args): mixed
     {
-        if (function_exists('apply_filters')) {
+        if ($hook !== '' && function_exists('apply_filters')) {
             return apply_filters($hook, $value, ...$args);
         }
 
