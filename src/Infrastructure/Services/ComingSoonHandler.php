@@ -116,10 +116,12 @@ final class ComingSoonHandler implements ComingSoonHandlerInterface
             return false;
         }
 
-        $shareKey = (string) get_option('woocommerce_share_key', '');
-        if ($shareKey === '' || $shareKey === '0') {
+        $option = get_option('woocommerce_share_key');
+        if (! is_scalar($option) || in_array((string) $option, ['', '0'], true)) {
             return false;
         }
+
+        $shareKey = (string) $option;
 
         // The private link carries the key as a query parameter: remember it, as
         // WooCommerce does, so the visitor keeps access on the next pages
