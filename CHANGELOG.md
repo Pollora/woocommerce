@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-27
+
+A security backport for projects that stay on 0.2; 0.3.0 already contains it.
+
 ### Fixed
 
 - A `woocommerce_share_key` option that is not text no longer opens the Coming Soon page: an array was read as the string `Array`, so `?woo-share=Array` gave access.
