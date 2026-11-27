@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Models\Template;
-use Pollora\WooCommerce\Domain\Services\WooCommerceService;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerceTemplateResolver;
 
 describe('WooCommerceTemplateResolver duplicates', function (): void {
     it('lists each Blade template once, however many times it is found', function (): void {
-        $domainService = Mockery::mock(WooCommerceService::class);
+        $domainService = Mockery::mock(WooCommerceServiceInterface::class);
         $domainService->shouldReceive('addBladeVariants')->andReturn([
             'archive-product.blade.php',
             'archive-product.blade.php',

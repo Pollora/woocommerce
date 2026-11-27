@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `WooCommerceServiceInterface` (`Pollora\WooCommerce\Domain\Contracts`) and `WooCommerceAdapterInterface` (`Pollora\WooCommerce\Infrastructure\Contracts`, which extends `WooCommerceEnvironmentInterface`), the public methods of the two classes below. The service provider binds them, and `WooCommerce` and `WooCommerceTemplateResolver` take them, so binding another implementation replaces the class
+
+### Changed
+
+- **BREAKING**: `WooCommerceService` and `WordPressWooCommerceAdapter` are now `final` (CONV-08). A class that extends one no longer loads, and a test can no longer mock it with Mockery: implement or mock its interface, and bind that interface instead of extending the class
+
 ### Fixed
 
 - A `woocommerce_share_key` option that is not text no longer opens the Coming Soon page: an array was read as the string `Array`, so `?woo-share=Array` gave access.

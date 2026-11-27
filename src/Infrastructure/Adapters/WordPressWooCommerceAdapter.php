@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\WooCommerce\Infrastructure\Adapters;
 
-use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
+use Pollora\WooCommerce\Infrastructure\Contracts\WooCommerceAdapterInterface;
 
 /**
  * Adapter for WordPress WooCommerce-specific functionality.
@@ -12,7 +12,7 @@ use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
  * This class provides an abstraction layer for WordPress and WooCommerce
  * specific functions, making the domain layer more testable and independent.
  */
-class WordPressWooCommerceAdapter implements WooCommerceEnvironmentInterface
+final class WordPressWooCommerceAdapter implements WooCommerceAdapterInterface
 {
     /**
      * Locate a template using WordPress locate_template function.
@@ -36,7 +36,7 @@ class WordPressWooCommerceAdapter implements WooCommerceEnvironmentInterface
      *
      * @param  string  $feature  The feature to add support for
      * @param  mixed  $options  Optional feature options
-     * @return void|false False on failure, void on success
+     * @return false|null False on failure, null on success
      */
     public function addThemeSupport(string $feature, mixed $options = null): mixed
     {

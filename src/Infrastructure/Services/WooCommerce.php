@@ -8,8 +8,8 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Str;
 use Pollora\View\Domain\Contracts\TemplateFinderInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceIntegrationInterface;
-use Pollora\WooCommerce\Domain\Services\WooCommerceService;
-use Pollora\WooCommerce\Infrastructure\Adapters\WordPressWooCommerceAdapter;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
+use Pollora\WooCommerce\Infrastructure\Contracts\WooCommerceAdapterInterface;
 
 /**
  * Infrastructure implementation of WooCommerce integration.
@@ -29,8 +29,8 @@ final class WooCommerce implements WooCommerceIntegrationInterface
     public function __construct(
         private readonly TemplateFinderInterface $templateFinder,
         private readonly ViewFactory $viewFactory,
-        private readonly WooCommerceService $domainService,
-        private readonly WordPressWooCommerceAdapter $adapter
+        private readonly WooCommerceServiceInterface $domainService,
+        private readonly WooCommerceAdapterInterface $adapter
     ) {}
 
     /**
