@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Pollora\WooCommerce\Infrastructure\Services;
 
 use Pollora\WooCommerce\Domain\Contracts\TemplateResolverInterface;
-use Pollora\WooCommerce\Domain\Services\WooCommerceService;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 
 /**
  * Infrastructure implementation of WooCommerce template resolver.
@@ -16,7 +16,7 @@ use Pollora\WooCommerce\Domain\Services\WooCommerceService;
 final class WooCommerceTemplateResolver implements TemplateResolverInterface
 {
     public function __construct(
-        private readonly WooCommerceService $domainService
+        private readonly WooCommerceServiceInterface $domainService
     ) {}
 
     /**

@@ -17,9 +17,11 @@ use Pollora\WooCommerce\Domain\Contracts\ComingSoonHandlerInterface;
 use Pollora\WooCommerce\Domain\Contracts\TemplateResolverInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceIntegrationInterface;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Services\WooCommerceService;
 use Pollora\WooCommerce\Events\WooCommerceEventDispatcher;
 use Pollora\WooCommerce\Infrastructure\Adapters\WordPressWooCommerceAdapter;
+use Pollora\WooCommerce\Infrastructure\Contracts\WooCommerceAdapterInterface;
 use Pollora\WooCommerce\Infrastructure\Services\ComingSoonHandler;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerce;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerceTemplateResolver;
@@ -131,6 +133,7 @@ final class WooCommerceServiceProvider extends ServiceProvider
     {
         // Autowired: the container hands it the bound WooCommerceEnvironmentInterface
         $this->app->singleton(WooCommerceService::class);
+        $this->app->singleton(WooCommerceServiceInterface::class, fn (Container $app): WooCommerceService => $app->make(WooCommerceService::class));
         $this->app->singleton(WooCommerceEventDispatcher::class);
     }
 
@@ -141,19 +144,20 @@ final class WooCommerceServiceProvider extends ServiceProvider
     {
         // Register the WordPress adapter
         $this->app->singleton(WordPressWooCommerceAdapter::class);
-        $this->app->singleton(WooCommerceEnvironmentInterface::class, fn (Container $app): WordPressWooCommerceAdapter => $app->make(WordPressWooCommerceAdapter::class));
+        $this->app->singleton(WooCommerceAdapterInterface::class, fn (Container $app): WordPressWooCommerceAdapter => $app->make(WordPressWooCommerceAdapter::class));
+        $this->app->singleton(WooCommerceEnvironmentInterface::class, fn (Container $app): WooCommerceAdapterInterface => $app->make(WooCommerceAdapterInterface::class));
 
         // Register the main WooCommerce integration implementation
         $this->app->singleton(WooCommerceIntegrationInterface::class, fn (Container $app): WooCommerce => new WooCommerce(
             $app->make(TemplateFinderInterface::class),
             $app->make(ViewFactory::class),
-            $app->make(WooCommerceService::class),
-            $app->make(WordPressWooCommerceAdapter::class)
+            $app->make(WooCommerceServiceInterface::class),
+            $app->make(WooCommerceAdapterInterface::class)
         ));
 
         // Register the template resolver implementation
         $this->app->singleton(TemplateResolverInterface::class, fn (Container $app): WooCommerceTemplateResolver => new WooCommerceTemplateResolver(
-            $app->make(WooCommerceService::class)
+            $app->make(WooCommerceServiceInterface::class)
         ));
 
         // Register the Coming Soon handler

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Pollora\WooCommerce\Domain\Contracts\TemplateResolverInterface;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Models\Template;
-use Pollora\WooCommerce\Domain\Services\WooCommerceService;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerceTemplateResolver;
 
 describe('WooCommerceTemplateResolver', function (): void {
     beforeEach(function (): void {
-        $this->domainService = Mockery::mock(WooCommerceService::class);
+        $this->domainService = Mockery::mock(WooCommerceServiceInterface::class);
         $this->resolver = new WooCommerceTemplateResolver($this->domainService);
     });
 

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Pollora\View\Domain\Contracts\TemplateFinderInterface;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Models\Template;
-use Pollora\WooCommerce\Domain\Services\WooCommerceService;
-use Pollora\WooCommerce\Infrastructure\Adapters\WordPressWooCommerceAdapter;
+use Pollora\WooCommerce\Infrastructure\Contracts\WooCommerceAdapterInterface;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerce;
 
 beforeEach(function (): void {
     $this->templateFinder = Mockery::mock(TemplateFinderInterface::class);
     $this->viewFactory = Mockery::mock(ViewFactory::class);
-    $this->domainService = Mockery::mock(WooCommerceService::class);
-    $this->adapter = Mockery::mock(WordPressWooCommerceAdapter::class);
+    $this->domainService = Mockery::mock(WooCommerceServiceInterface::class);
+    $this->adapter = Mockery::mock(WooCommerceAdapterInterface::class);
 
     $this->wc = new WooCommerce(
         $this->templateFinder,

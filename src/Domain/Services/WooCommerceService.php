@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\WooCommerce\Domain\Services;
 
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Models\Template;
 use Pollora\WooCommerce\Domain\Support\DefaultWooCommerceEnvironment;
 
@@ -15,7 +16,7 @@ use Pollora\WooCommerce\Domain\Support\DefaultWooCommerceEnvironment;
  * integration; what it needs to know about the active theme and the plugin
  * comes through WooCommerceEnvironmentInterface.
  */
-class WooCommerceService
+final class WooCommerceService implements WooCommerceServiceInterface
 {
     public function __construct(
         private readonly WooCommerceEnvironmentInterface $environment = new DefaultWooCommerceEnvironment

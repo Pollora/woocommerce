@@ -16,9 +16,11 @@ use Pollora\WooCommerce\Domain\Contracts\ComingSoonHandlerInterface;
 use Pollora\WooCommerce\Domain\Contracts\TemplateResolverInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceEnvironmentInterface;
 use Pollora\WooCommerce\Domain\Contracts\WooCommerceIntegrationInterface;
+use Pollora\WooCommerce\Domain\Contracts\WooCommerceServiceInterface;
 use Pollora\WooCommerce\Domain\Services\WooCommerceService;
 use Pollora\WooCommerce\Events\WooCommerceEventDispatcher;
 use Pollora\WooCommerce\Infrastructure\Adapters\WordPressWooCommerceAdapter;
+use Pollora\WooCommerce\Infrastructure\Contracts\WooCommerceAdapterInterface;
 use Pollora\WooCommerce\Infrastructure\Providers\WooCommerceServiceProvider;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerce;
 use Pollora\WooCommerce\Infrastructure\Services\WooCommerceTemplateResolver;
@@ -95,6 +97,14 @@ describe('WooCommerceServiceProvider', function (): void {
         expect($this->container->get(WooCommerceEnvironmentInterface::class))
             ->toBeInstanceOf(WordPressWooCommerceAdapter::class)
             ->toBe($this->container->get(WordPressWooCommerceAdapter::class));
+    });
+
+    test('binds each contract to the class it replaces, and the environment to the adapter contract', function (): void {
+        $this->provider->register();
+
+        expect($this->container->get(WooCommerceServiceInterface::class))->toBe($this->container->get(WooCommerceService::class))
+            ->and($this->container->get(WooCommerceAdapterInterface::class))->toBe($this->container->get(WordPressWooCommerceAdapter::class))
+            ->and($this->container->get(WooCommerceEnvironmentInterface::class))->toBe($this->container->get(WooCommerceAdapterInterface::class));
     });
 
     test('can register application services', function (): void {
